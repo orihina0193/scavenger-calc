@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拾い屋パス 計算ツール</title>
+<style>
+  :root{--bg:#17181c;--card:#23252b;--line:#363944;--tx:#eceef2;--sub:#9aa0ad;--acc:#e0a53a;--ok:#5fcf80;--ng:#e5686a;--vip:#a672e8}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,"Hiragino Sans",sans-serif;line-height:1.5;padding:14px;max-width:560px;margin:auto}
+  h1{font-size:19px;margin:4px 0 12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  h2{font-size:15px;margin:0 0 10px;color:var(--acc)}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+  input[type=number]{width:100%;padding:10px;font-size:17px;border-radius:8px;border:1px solid var(--line);background:#14151a;color:var(--tx)}
+  .row{display:flex;gap:10px}.row>div{flex:1}
+  .res{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .box{border:1px solid var(--line);border-radius:10px;padding:10px;background:#1c1e24}
+  .box.vip{border-color:var(--vip)}
+  .box h3{margin:0 0 6px;font-size:13px;color:var(--sub)}
+  .big{font-size:24px;font-weight:700}
+  .small{font-size:12px;color:var(--sub);line-height:1.6}
+  .ok{color:var(--ok)}.ng{color:var(--ng)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:center}
+  th{color:var(--sub);font-weight:500}
+  .note{font-size:12px;color:var(--sub);margin-top:8px}
+  .seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px}
+  .seg button{flex:1;padding:12px 6px;font-size:14px;border:0;background:#1c1e24;color:var(--sub);font-weight:600}
+  .seg button.on{background:var(--acc);color:#1a1a1a}
+  .stp{display:flex;align-items:center;justify-content:flex-end;gap:14px}
+  .stp .bt{display:flex;gap:6px}
+  .stp button{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:#2d3039;color:var(--tx);font-size:20px;line-height:1;padding:0}
+  .stp button{touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+  .stp button:active{background:var(--acc);color:#1a1a1a}
+  .stp .v{min-width:34px;text-align:center;font-size:18px;font-weight:700}
+  .stp.qty{gap:10px}
+  .stp.qty .bt{gap:4px}
+  .stp.qty button{width:30px;height:32px;font-size:17px;border-radius:8px}
+  .stp.qty .v{min-width:26px;font-size:17px;text-align:right}
+  .stp.wide{justify-content:space-between;gap:18px}
+  .stp.wide button{width:56px;height:46px}
+  .stp.wide .v{min-width:56px;font-size:22px}
+  .stm{margin:8px 0;padding:8px 10px;border-radius:10px;background:#2a2417;border:1px solid var(--acc)}
+  .stm .t{font-size:12px;color:var(--acc);font-weight:700;margin-bottom:2px}
+  .stm .l{display:flex;justify-content:space-between;align-items:baseline}
+  .stm .l span{font-size:12px;color:var(--sub)}
+  .stm .l b{font-size:20px;color:#ffd27a}
+  .stm .n{font-size:11px;color:var(--sub);margin-top:4px}
+  .need{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .need b{font-size:18px}
+</style>
+</head>
+<body>
+<h1>拾い屋パス 計算ツール</h1>
+
+<div class="card">
+  <h2>いまの状況</h2>
+  <div class="row">
+    <div><label>持ち越しの名札</label><input type="number" id="own" value="0" inputmode="numeric"></div>
+    <div><label>現在のポイント</label><input type="number" id="cur" value="0" inputmode="numeric"></div>
+  </div>
+  <div class="row">
+    <div><label>今日の討伐済み回数</label><input type="number" id="done" value="0" inputmode="numeric"></div>
+    <div><label>残り日数（今日を含む）</label><div class="stp wide" id="days" data-min="1" data-max="3" data-v="2"></div></div>
+  </div>
+  <div class="row">
+    <div><label>1討伐あたりの名札</label><input type="number" id="per" value="10" inputmode="numeric"></div>
+    <div><label>1討伐のスタミナ</label><input type="number" id="stam" value="43" inputmode="numeric"></div>
+  </div>
+  <div class="note">名札の目安：Lv9以上なら最低10（Lv9=10〜11、Lv10=10〜12、Lv13〜15=10〜15）。多めに見たいときは数字を上げてね。イベントは3日間、いまは今日の残り＋丸1日。</div>
+</div>
+
+<div class="seg">
+  <button id="m1" class="on">ほしいもの重視</button>
+  <button id="m2">2000pt完走目標</button>
+</div>
+
+<div class="card" id="shopCard">
+  <h2>ほしいもの（名札ショップ）</h2>
+  <div id="shop"></div>
+  <div class="need"><span>必要な名札（合計）</span><b id="costT">0</b></div>
+  <div class="need"><span>持ち越しの名札</span><b id="ownT">0</b></div>
+  <div class="need"><span>足りない名札</span><b id="lackT">0</b></div>
+</div>
+
+<div class="card">
+  <h2 id="resTitle">毎日の討伐回数</h2>
+  <div class="res">
+    <div class="box"><h3>特権なし</h3><div id="rA"></div></div>
+    <div class="box vip"><h3>特権解放（1600円）</h3><div id="rB"></div></div>
+  </div>
+  <div class="note" id="resNote"></div>
+</div>
+
+<div class="card">
+  <h2>デイリー任務（攻撃回数 → pt）</h2>
+  <table id="tasks"></table>
+  <div class="note">全達成で1日1050pt（特権ありは2倍で2100pt）。</div>
+</div>
+
+<div class="card">
+  <h2>名札の報酬ライン</h2>
+  <table>
+    <tr><th>pt</th><th>無料側</th><th>特権側</th></tr>
+    <tr><td>300</td><td>5</td><td>15</td></tr>
+    <tr><td>900</td><td>10</td><td>30</td></tr>
+    <tr><td>1300</td><td>15</td><td>45</td></tr>
+    <tr><td>1700</td><td>20</td><td>60</td></tr>
+    <tr><td>合計</td><td>50</td><td>150</td></tr>
+  </table>
+  <div class="note">特権側はダイヤ200個×11ラインも付きます（計2200個）。特権を解放すると、すでに過ぎたライン分もまとめて受け取れる前提で計算しています。</div>
+</div>
+
+<script>
+const TASKS=[[1,50],[3,50],[5,50],[10,100],[15,100],[20,100],[25,100],[35,200],[45,300]];
+const TIERS=[100,200,300,500,700,900,1100,1300,1500,1700,2000];
+const TAG_FREE={300:5,900:10,1300:15,1700:20};
+const TAG_VIP={300:15,900:30,1300:45,1700:60};
+const SHOP=[
+  ['ウェポン設計図補給箱Ⅱ',400,1,'×1'],
+  ['ホログラフィー設計図',90,2,'×1'],
+  ['異能缶',20,10,'×1'],
+  ['ゴールドエッグ',50,1,'×1'],
+  ['選択型改造補給',15,30,'×3'],
+  ['選択型プロモート補給（エピック）',15,30,'×4'],
+  ['選択型プロモート補給（エリート）',15,30,'×15'],
+  ['選択型プロモート補給',15,30,'×15'],
+  ['機密図',15,10,'×200'],
+  ['ナノ炭素繊維管',15,10,'×20'],
+  ['陽子加速器の部品',15,10,'×200'],
+  ['小型資源補給（安全）',10,10,'×25'],
+  ['汎用ブースト（60分）',10,10,'×20']
+];
+const $=id=>document.getElementById(id);
+const num=id=>Math.max(0,parseInt($(id).value)||0);
+const taskPts=a=>TASKS.reduce((s,[n,p])=>s+(a>=n?p:0),0);
+const tiers=p=>TIERS.filter(t=>p>=t).length;
+let MODE=1;
+
+// パス報酬の名札。無料側は「現在ptを超えた分」だけ新規、特権側は到達したラインすべて
+function passTags(vip,cur,fin){
+  let s=0;
+  for(const t of TIERS) if(t<=fin){ if(t>cur)s+=TAG_FREE[t]||0; if(vip)s+=TAG_VIP[t]||0; }
+  return s;
+}
+// 「毎日 k 回」攻撃したときの結果。今日は合計 k 回（すでに done 回済み）、残りの丸1日も k 回ずつ
+function sim(vip,k,S){
+  const m=vip?2:1,T=Math.max(k,S.done),D=Math.max(0,S.days-1);
+  const pts=S.cur+(taskPts(T)-taskPts(S.done))*m+D*taskPts(k)*m;
+  const atk=(T-S.done)+D*k;
+  const drop=atk*S.per,pass=passTags(vip,S.cur,pts);
+  return{k,T,D,pts,atk,drop,pass,tg:S.own+drop+pass};
+}
+// pred を満たす最小の「毎日の回数」
+function findK(vip,S,pred){
+  for(let k=0;k<=150;k++){const r=sim(vip,k,S);if(pred(r))return r;}
+  return null;
+}
+
+function buildShop(){
+  $('shop').innerHTML='<table><tr><th style="text-align:left">アイテム</th><th>名札</th><th>残</th><th>個数</th></tr>'
+   +SHOP.map((s,i)=>`<tr><td style="text-align:left">${s[0]}<span class="small"> ${s[3]}</span></td><td>${s[1]}</td><td>${s[2]}</td><td><div class="stp qty" data-i="${i}" data-min="0" data-max="${s[2]}" data-v="0"></div></td></tr>`).join('')
+   +'</table>';
+}
+function shopCost(){
+  let c=0;
+  document.querySelectorAll('.qty').forEach(e=>{
+    c+=(+e.dataset.v||0)*SHOP[+e.dataset.i][1];
+  });
+  return c;
+}
+
+function show(id,r,vip,S,cost){
+  const el=$(id);
+  if(!r){el.innerHTML='<div class="big ng">届かない</div><div class="small">毎日150回でも不足</div>';return;}
+  const stDay=r.k*S.stam,stAll=r.atk*S.stam;
+  let head,extra='';
+  if(MODE===1&&cost-S.own<=0){
+    el.innerHTML='<div class="big ok">討伐なしでOK</div><div class="small">持ち越しで足りてる</div>';return;
+  }
+  head='<div class="big ok">毎日 '+r.k+'回</div>'
+    +'<div class="stm"><div class="t">必要スタミナ</div><div class="l"><span>毎日</span><b>'+stDay.toLocaleString()+'</b></div><div class="l"><span>合計</span><b>'+stAll.toLocaleString()+'</b></div><div class="n">※狩猟集中のスタミナは含みません</div></div>';
+  const todayLeft=r.T-S.done;
+  extra='<div class="small">今日はあと <b>'+todayLeft+'</b>回'+(r.D>0?'（以降 毎日'+r.k+'回）':'')+'<br>'
+    +'合計 '+r.atk+'回討伐<br>'
+    +'名札：'+r.tg+'枚（持越 '+S.own+' ＋討伐 '+r.drop+' ＋パス '+r.pass+'）<br>'
+    +'pt：'+r.pts+'（'+tiers(r.pts)+'/11ライン）';
+  extra+='</div>';
+  el.innerHTML=head+extra;
+}
+
+function calc(){
+  const S={own:num('own'),cur:num('cur'),done:num('done'),days:Math.max(1,+$('days').dataset.v||1),per:num('per'),stam:num('stam')};
+  const cost=shopCost(),lack=Math.max(0,cost-S.own);
+  $('costT').textContent=cost;$('ownT').textContent=S.own;
+  $('lackT').textContent=lack;$('lackT').className=lack>0?'ng':'ok';
+
+  let pred;
+  if(MODE===1){
+    $('resTitle').textContent='ほしいもの重視：毎日の討伐回数';
+    pred=r=>r.tg>=cost;
+    $('resNote').textContent='ほしいものの名札（'+cost+'枚）に届く、一番少ない「毎日の回数」です。デイリー任務のptで増えるパスの名札も数えています。';
+  }else{
+    $('resTitle').textContent='2000pt完走目標：毎日の討伐回数';
+    pred=r=>r.pts>=2000;
+    $('resNote').textContent='段階ポイントを2000まで完走するのに必要な、一番少ない「毎日の回数」です。特権なしでも完走できるか比べられます。';
+  }
+  show('rA',findK(false,S,pred),false,S,cost);
+  show('rB',findK(true,S,pred),true,S,cost);
+}
+
+$('tasks').innerHTML='<tr><th>攻撃回数</th>'+TASKS.map(t=>'<th>'+t[0]+'</th>').join('')+'</tr><tr><th>pt</th>'+TASKS.map(t=>'<td>'+t[1]+'</td>').join('')+'</tr>';
+buildShop();
+// ＋／－ ボタンで数字を調整する部品
+function drawStp(el){
+  el.innerHTML='<span class="v">'+el.dataset.v+'</span><span class="bt"><button type="button" data-d="-1">−</button><button type="button" data-d="1">＋</button></span>';
+}
+document.querySelectorAll('.stp').forEach(drawStp);
+// 長押しで連続して増減（押し続けるほど速くなる）
+let holdTimer=null;
+function stepOnce(el,d){
+  const min=+el.dataset.min,max=+el.dataset.max;
+  el.dataset.v=Math.min(max,Math.max(min,(+el.dataset.v||0)+d));
+  el.querySelector('.v').textContent=el.dataset.v;
+  calc();
+}
+function stopHold(){if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}}
+document.addEventListener('pointerdown',ev=>{
+  const b=ev.target.closest&&ev.target.closest('.stp button');if(!b)return;
+  ev.preventDefault();
+  const el=b.closest('.stp'),d=+b.dataset.d;
+  stopHold();
+  stepOnce(el,d);
+  let n=0;
+  const tick=()=>{
+    n++;
+    stepOnce(el,d*(n>25?5:1));      // 長く押すと5ずつ
+    holdTimer=setTimeout(tick,n>25?60:n>8?90:140);
+  };
+  holdTimer=setTimeout(tick,420);   // 0.4秒押し続けたら連続スタート
+});
+['pointerup','pointercancel','pointerleave','blur'].forEach(t=>document.addEventListener(t,stopHold,true));
+document.addEventListener('contextmenu',ev=>{if(ev.target.closest&&ev.target.closest('.stp'))ev.preventDefault();});
+$('m1').onclick=()=>{MODE=1;$('m1').className='on';$('m2').className='';$('shopCard').style.display='';calc();};
+$('m2').onclick=()=>{MODE=2;$('m2').className='on';$('m1').className='';$('shopCard').style.display='none';calc();};
+document.querySelectorAll('input').forEach(e=>{e.addEventListener('input',calc);e.addEventListener('change',calc)});
+calc();
+</script>
+</body>
+</html>

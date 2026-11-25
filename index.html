@@ -49,88 +49,153 @@
   .stm .n{font-size:11px;color:var(--sub);margin-top:4px}
   .need{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
   .need b{font-size:18px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 12px}
+  .top h1{margin:0}
+  .lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-shrink:0}
+  .lang button{padding:7px 10px;font-size:12px;border:0;background:#1c1e24;color:var(--sub);font-weight:600}
+  .lang button.on{background:var(--acc);color:#1a1a1a}
 </style>
 </head>
 <body>
-<h1>拾い屋パス 計算ツール</h1>
+<div class="top">
+  <h1 data-i18n="title"></h1>
+  <div class="lang"><button type="button" data-l="ja">日本語</button><button type="button" data-l="en">English</button></div>
+</div>
 
 <div class="card">
-  <h2>いまの状況</h2>
+  <h2 data-i18n="hStatus"></h2>
   <div class="row">
-    <div><label>持ち越しの名札</label><input type="number" id="own" value="0" inputmode="numeric"></div>
-    <div><label>現在のポイント</label><input type="number" id="cur" value="0" inputmode="numeric"></div>
+    <div><label data-i18n="lOwn"></label><input type="number" id="own" value="0" inputmode="numeric"></div>
+    <div><label data-i18n="lCur"></label><input type="number" id="cur" value="0" inputmode="numeric"></div>
   </div>
   <div class="row">
-    <div><label>今日の討伐済み回数</label><input type="number" id="done" value="0" inputmode="numeric"></div>
-    <div><label>残り日数（今日を含む）</label><div class="stp wide" id="days" data-min="1" data-max="3" data-v="2"></div></div>
+    <div><label data-i18n="lDone"></label><input type="number" id="done" value="0" inputmode="numeric"></div>
+    <div><label data-i18n="lDays"></label><div class="stp wide" id="days" data-min="1" data-max="3" data-v="2"></div></div>
   </div>
   <div class="row">
-    <div><label>1討伐あたりの名札</label><input type="number" id="per" value="10" inputmode="numeric"></div>
-    <div><label>1討伐のスタミナ</label><input type="number" id="stam" value="43" inputmode="numeric"></div>
+    <div><label data-i18n="lPer"></label><input type="number" id="per" value="10" inputmode="numeric"></div>
+    <div><label data-i18n="lStam"></label><input type="number" id="stam" value="43" inputmode="numeric"></div>
   </div>
-  <div class="note">名札の目安：Lv9以上なら最低10（Lv9=10〜11、Lv10=10〜12、Lv13〜15=10〜15）。多めに見たいときは数字を上げてね。イベントは3日間、いまは今日の残り＋丸1日。</div>
+  <div class="note" data-i18n="noteStatus"></div>
 </div>
 
 <div class="seg">
-  <button id="m1" class="on">ほしいもの重視</button>
-  <button id="m2">2000pt完走目標</button>
+  <button id="m1" class="on" data-i18n="m1"></button>
+  <button id="m2" data-i18n="m2"></button>
 </div>
 
 <div class="card" id="shopCard">
-  <h2>ほしいもの（名札ショップ）</h2>
+  <h2 data-i18n="hShop"></h2>
   <div id="shop"></div>
-  <div class="need"><span>必要な名札（合計）</span><b id="costT">0</b></div>
-  <div class="need"><span>持ち越しの名札</span><b id="ownT">0</b></div>
-  <div class="need"><span>足りない名札</span><b id="lackT">0</b></div>
+  <div class="need"><span data-i18n="needTotal"></span><b id="costT">0</b></div>
+  <div class="need"><span data-i18n="needOwn"></span><b id="ownT">0</b></div>
+  <div class="need"><span data-i18n="needLack"></span><b id="lackT">0</b></div>
 </div>
 
 <div class="card">
-  <h2 id="resTitle">毎日の討伐回数</h2>
+  <h2 id="resTitle"></h2>
   <div class="res">
-    <div class="box"><h3>特権なし</h3><div id="rA"></div></div>
-    <div class="box vip"><h3>特権解放（1600円）</h3><div id="rB"></div></div>
+    <div class="box"><h3 data-i18n="boxA"></h3><div id="rA"></div></div>
+    <div class="box vip"><h3 data-i18n="boxB"></h3><div id="rB"></div></div>
   </div>
   <div class="note" id="resNote"></div>
 </div>
 
 <div class="card">
-  <h2>デイリー任務（攻撃回数 → pt）</h2>
+  <h2 data-i18n="hDaily"></h2>
   <table id="tasks"></table>
-  <div class="note">全達成で1日1050pt（特権ありは2倍で2100pt）。</div>
+  <div class="note" data-i18n="noteDaily"></div>
 </div>
 
 <div class="card">
-  <h2>名札の報酬ライン</h2>
+  <h2 data-i18n="hTags"></h2>
   <table>
-    <tr><th>pt</th><th>無料側</th><th>特権側</th></tr>
+    <tr><th>pt</th><th data-i18n="thFree"></th><th data-i18n="thVip"></th></tr>
     <tr><td>300</td><td>5</td><td>15</td></tr>
     <tr><td>900</td><td>10</td><td>30</td></tr>
     <tr><td>1300</td><td>15</td><td>45</td></tr>
     <tr><td>1700</td><td>20</td><td>60</td></tr>
-    <tr><td>合計</td><td>50</td><td>150</td></tr>
+    <tr><td data-i18n="total"></td><td>50</td><td>150</td></tr>
   </table>
-  <div class="note">特権側はダイヤ200個×11ラインも付きます（計2200個）。特権を解放すると、すでに過ぎたライン分もまとめて受け取れる前提で計算しています。</div>
+  <div class="note" data-i18n="noteTags"></div>
 </div>
 
 <script>
+// ===== 言語（日本語 / English）=====
+const D={
+ja:{
+  title:'拾い屋パス 計算ツール',
+  hStatus:'いまの状況',lOwn:'持ち越しの名札',lCur:'現在のポイント',lDone:'今日の討伐済み回数',lDays:'残り日数（今日を含む）',
+  lPer:'1討伐あたりの名札',lStam:'1討伐のスタミナ',
+  noteStatus:'名札の目安：Lv9以上なら最低10（Lv9=10〜11、Lv10=10〜12、Lv13〜15=10〜15）。多めに見たいときは数字を上げてね。イベントは3日間、いまは今日の残り＋丸1日。',
+  m1:'ほしいもの重視',m2:'2000pt完走目標',
+  hShop:'ほしいもの（名札ショップ）',needTotal:'必要な名札（合計）',needOwn:'持ち越しの名札',needLack:'足りない名札',
+  thItem:'アイテム',thTag:'名札',thLeft:'残',thQty:'個数',
+  hRes1:'ほしいもの重視：毎日の討伐回数',hRes2:'2000pt完走目標：毎日の討伐回数',
+  boxA:'特権なし',boxB:'特権解放（1600円）',
+  resNote1:c=>'ほしいものの名札（'+c+'枚）に届く、一番少ない「毎日の回数」です。デイリー任務のptで増えるパスの名札も数えています。',
+  resNote2:'段階ポイントを2000まで完走するのに必要な、一番少ない「毎日の回数」です。特権なしでも完走できるか比べられます。',
+  hDaily:'デイリー任務（攻撃回数 → pt）',thAtk:'攻撃回数',
+  noteDaily:'全達成で1日1050pt（特権ありは2倍で2100pt）。',
+  hTags:'名札の報酬ライン',thFree:'無料側',thVip:'特権側',total:'合計',
+  noteTags:'特権側はダイヤ200個×11ラインも付きます（計2200個）。特権を解放すると、すでに過ぎたライン分もまとめて受け取れる前提で計算しています。',
+  unreach:'届かない',unreachSub:'毎日150回でも不足',
+  noNeed:'討伐なしでOK',noNeedSub:'持ち越しで足りてる',
+  perDay:k=>'毎日 '+k+'回',
+  stamT:'必要スタミナ',stamDay:'毎日',stamAll:'合計',stamNote:'※狩猟集中のスタミナ軽減は計算外',
+  today:(n,k,D)=>'今日はあと <b>'+n+'</b>回'+(D>0?'（以降 毎日'+k+'回）':''),
+  totalAtk:n=>'合計 '+n+'回討伐',
+  tagLine:(tg,own,drop,pass)=>'名札：'+tg+'枚（持越 '+own+' ＋討伐 '+drop+' ＋パス '+pass+'）',
+  ptLine:(p,t)=>'pt：'+p+'（'+t+'/11ライン）'
+},
+en:{
+  title:'Scavenger Pass Calculator',
+  hStatus:'Current status',lOwn:'Tags carried over',lCur:'Current points',lDone:'Hideout attacks done today',lDays:'Days left (incl. today)',
+  lPer:'Tags per attack',lStam:'Stamina per attack',
+  noteStatus:'Tag guide: Lv9+ gives at least 10 (Lv9 = 10–11, Lv10 = 10–12, Lv13–15 = 10–15). Raise the number if you want a more optimistic estimate. The event lasts 3 days; right now it is the rest of today plus one full day.',
+  m1:'Shop goal',m2:'Reach 2000 pts',
+  hShop:'Wishlist (Tag Shop)',needTotal:'Tags needed (total)',needOwn:'Tags carried over',needLack:'Tags short',
+  thItem:'Item',thTag:'Tags',thLeft:'Left',thQty:'Qty',
+  hRes1:'Shop goal: attacks per day',hRes2:'Reach 2000 pts: attacks per day',
+  boxA:'No Privileges',boxB:'Activate Privileges (¥1,600)',
+  resNote1:c=>'The fewest attacks per day needed to reach your wishlist ('+c+' tags). Pass tags earned from Daily Quest points are included.',
+  resNote2:'The fewest attacks per day needed to clear every reward tier up to 2000 pts. Compare with and without Privileges.',
+  hDaily:'Daily Quest (attacks → pts)',thAtk:'Attacks',
+  noteDaily:'Clearing all of them gives 1,050 pts a day (2,100 with Privileges, which doubles it).',
+  hTags:'Tag rewards by tier',thFree:'Free',thVip:'Privileges',total:'Total',
+  noteTags:'The Privileges side also gives 200 diamonds on each of the 11 tiers (2,200 in total). The calculation assumes that activating Privileges also lets you claim the tiers you have already passed.',
+  unreach:'Out of reach',unreachSub:'Not enough even at 150 a day',
+  noNeed:'No attacks needed',noNeedSub:'Your carried-over tags are enough',
+  perDay:k=>k+' per day',
+  stamT:'Stamina needed',stamDay:'Per day',stamAll:'Total',stamNote:'*Hunt Focus stamina reduction is not included',
+  today:(n,k,D)=>'<b>'+n+'</b> more today'+(D>0?' (then '+k+' per day)':''),
+  totalAtk:n=>n+' attacks in total',
+  tagLine:(tg,own,drop,pass)=>'Tags: '+tg+' ('+own+' carried over + '+drop+' attacks + '+pass+' pass)',
+  ptLine:(p,t)=>'Pts: '+p+' ('+t+'/11 tiers)'
+}};
+let LANG='ja';
+try{const s=localStorage.getItem('scav-lang');LANG=(s==='ja'||s==='en')?s:((navigator.language||'ja').toLowerCase().startsWith('ja')?'ja':'en');}catch(e){LANG=(navigator.language||'ja').toLowerCase().startsWith('ja')?'ja':'en';}
+const L=()=>D[LANG];
+
 const TASKS=[[1,50],[3,50],[5,50],[10,100],[15,100],[20,100],[25,100],[35,200],[45,300]];
 const TIERS=[100,200,300,500,700,900,1100,1300,1500,1700,2000];
 const TAG_FREE={300:5,900:10,1300:15,1700:20};
 const TAG_VIP={300:15,900:30,1300:45,1700:60};
+// [日本語名, English name, 名札, 残り数, 1個あたりの数]
 const SHOP=[
-  ['ウェポン設計図補給箱Ⅱ',400,1,'×1'],
-  ['ホログラフィー設計図',90,2,'×1'],
-  ['異能缶',20,10,'×1'],
-  ['ゴールドエッグ',50,1,'×1'],
-  ['選択型改造補給',15,30,'×3'],
-  ['選択型プロモート補給（エピック）',15,30,'×4'],
-  ['選択型プロモート補給（エリート）',15,30,'×15'],
-  ['選択型プロモート補給',15,30,'×15'],
-  ['機密図',15,10,'×200'],
-  ['ナノ炭素繊維管',15,10,'×20'],
-  ['陽子加速器の部品',15,10,'×200'],
-  ['小型資源補給（安全）',10,10,'×25'],
-  ['汎用ブースト（60分）',10,10,'×20']
+  ['ウェポン設計図補給箱Ⅱ','Weapon Design Box II',400,1,'×1'],
+  ['ホログラフィー設計図','Holo Design',90,2,'×1'],
+  ['異能缶','Amplifier Cell',20,10,'×1'],
+  ['ゴールドエッグ','Golden Egg',50,1,'×1'],
+  ['選択型改造補給','Modification Choice Box',15,30,'×3'],
+  ['選択型プロモート補給（エピック）','Promote Choice Box III',15,30,'×4'],
+  ['選択型プロモート補給（エリート）','Promote Choice Box II',15,30,'×15'],
+  ['選択型プロモート補給','Promote Choice Box',15,30,'×15'],
+  ['機密図','Classified Blueprint',15,10,'×200'],
+  ['ナノ炭素繊維管','Carbon Nanotube',15,10,'×20'],
+  ['陽子加速器の部品','Proton Accelerator Part',15,10,'×200'],
+  ['小型資源補給（安全）','Lesser Resource Box (Safe)',10,10,'×25'],
+  ['汎用ブースト（60分）','60-min Omni Speedup',10,10,'×20']
 ];
 const $=id=>document.getElementById(id);
 const num=id=>Math.max(0,parseInt($(id).value)||0);
@@ -159,38 +224,36 @@ function findK(vip,S,pred){
 }
 
 function buildShop(){
-  $('shop').innerHTML='<table><tr><th style="text-align:left">アイテム</th><th>名札</th><th>残</th><th>個数</th></tr>'
-   +SHOP.map((s,i)=>`<tr><td style="text-align:left">${s[0]}<span class="small"> ${s[3]}</span></td><td>${s[1]}</td><td>${s[2]}</td><td><div class="stp qty" data-i="${i}" data-min="0" data-max="${s[2]}" data-v="0"></div></td></tr>`).join('')
+  $('shop').innerHTML='<table><tr><th style="text-align:left" data-i18n="thItem"></th><th data-i18n="thTag"></th><th data-i18n="thLeft"></th><th data-i18n="thQty"></th></tr>'
+   +SHOP.map((s,i)=>`<tr><td style="text-align:left"><span class="iname" data-i="${i}"></span><span class="small"> ${s[4]}</span></td><td>${s[2]}</td><td>${s[3]}</td><td><div class="stp qty" data-i="${i}" data-min="0" data-max="${s[3]}" data-v="0"></div></td></tr>`).join('')
    +'</table>';
 }
 function shopCost(){
   let c=0;
   document.querySelectorAll('.qty').forEach(e=>{
-    c+=(+e.dataset.v||0)*SHOP[+e.dataset.i][1];
+    c+=(+e.dataset.v||0)*SHOP[+e.dataset.i][2];
   });
   return c;
 }
 
 function show(id,r,vip,S,cost){
-  const el=$(id);
-  if(!r){el.innerHTML='<div class="big ng">届かない</div><div class="small">毎日150回でも不足</div>';return;}
+  const el=$(id),T=L();
+  if(!r){el.innerHTML='<div class="big ng">'+T.unreach+'</div><div class="small">'+T.unreachSub+'</div>';return;}
   const stDay=r.k*S.stam,stAll=r.atk*S.stam;
-  let head,extra='';
   if(MODE===1&&cost-S.own<=0){
-    el.innerHTML='<div class="big ok">討伐なしでOK</div><div class="small">持ち越しで足りてる</div>';return;
+    el.innerHTML='<div class="big ok">'+T.noNeed+'</div><div class="small">'+T.noNeedSub+'</div>';return;
   }
-  head='<div class="big ok">毎日 '+r.k+'回</div>'
-    +'<div class="stm"><div class="t">必要スタミナ</div><div class="l"><span>毎日</span><b>'+stDay.toLocaleString()+'</b></div><div class="l"><span>合計</span><b>'+stAll.toLocaleString()+'</b></div><div class="n">※狩猟集中のスタミナ軽減は計算外</div></div>';
-  const todayLeft=r.T-S.done;
-  extra='<div class="small">今日はあと <b>'+todayLeft+'</b>回'+(r.D>0?'（以降 毎日'+r.k+'回）':'')+'<br>'
-    +'合計 '+r.atk+'回討伐<br>'
-    +'名札：'+r.tg+'枚（持越 '+S.own+' ＋討伐 '+r.drop+' ＋パス '+r.pass+'）<br>'
-    +'pt：'+r.pts+'（'+tiers(r.pts)+'/11ライン）';
-  extra+='</div>';
+  const head='<div class="big ok">'+T.perDay(r.k)+'</div>'
+    +'<div class="stm"><div class="t">'+T.stamT+'</div><div class="l"><span>'+T.stamDay+'</span><b>'+stDay.toLocaleString()+'</b></div><div class="l"><span>'+T.stamAll+'</span><b>'+stAll.toLocaleString()+'</b></div><div class="n">'+T.stamNote+'</div></div>';
+  const extra='<div class="small">'+T.today(r.T-S.done,r.k,r.D)+'<br>'
+    +T.totalAtk(r.atk)+'<br>'
+    +T.tagLine(r.tg,S.own,r.drop,r.pass)+'<br>'
+    +T.ptLine(r.pts,tiers(r.pts))+'</div>';
   el.innerHTML=head+extra;
 }
 
 function calc(){
+  const T=L();
   const S={own:num('own'),cur:num('cur'),done:num('done'),days:Math.max(1,+$('days').dataset.v||1),per:num('per'),stam:num('stam')};
   const cost=shopCost(),lack=Math.max(0,cost-S.own);
   $('costT').textContent=cost;$('ownT').textContent=S.own;
@@ -198,19 +261,35 @@ function calc(){
 
   let pred;
   if(MODE===1){
-    $('resTitle').textContent='ほしいもの重視：毎日の討伐回数';
+    $('resTitle').textContent=T.hRes1;
     pred=r=>r.tg>=cost;
-    $('resNote').textContent='ほしいものの名札（'+cost+'枚）に届く、一番少ない「毎日の回数」です。デイリー任務のptで増えるパスの名札も数えています。';
+    $('resNote').textContent=T.resNote1(cost);
   }else{
-    $('resTitle').textContent='2000pt完走目標：毎日の討伐回数';
+    $('resTitle').textContent=T.hRes2;
     pred=r=>r.pts>=2000;
-    $('resNote').textContent='段階ポイントを2000まで完走するのに必要な、一番少ない「毎日の回数」です。特権なしでも完走できるか比べられます。';
+    $('resNote').textContent=T.resNote2;
   }
   show('rA',findK(false,S,pred),false,S,cost);
   show('rB',findK(true,S,pred),true,S,cost);
 }
 
-$('tasks').innerHTML='<tr><th>攻撃回数</th>'+TASKS.map(t=>'<th>'+t[0]+'</th>').join('')+'</tr><tr><th>pt</th>'+TASKS.map(t=>'<td>'+t[1]+'</td>').join('')+'</tr>';
+// 画面の文言を現在の言語に差し替える
+function applyLang(){
+  const T=L();
+  document.documentElement.lang=LANG;
+  document.title=T.title;
+  document.querySelectorAll('[data-i18n]').forEach(e=>{e.innerHTML=T[e.dataset.i18n];});
+  document.querySelectorAll('.iname').forEach(e=>{e.textContent=SHOP[+e.dataset.i][LANG==='ja'?0:1];});
+  $('tasks').innerHTML='<tr><th>'+T.thAtk+'</th>'+TASKS.map(t=>'<th>'+t[0]+'</th>').join('')+'</tr><tr><th>pt</th>'+TASKS.map(t=>'<td>'+t[1]+'</td>').join('')+'</tr>';
+  document.querySelectorAll('.lang button').forEach(b=>{b.className=b.dataset.l===LANG?'on':'';});
+  calc();
+}
+function setLang(l){
+  LANG=l;
+  try{localStorage.setItem('scav-lang',l);}catch(e){}
+  applyLang();
+}
+
 buildShop();
 // ＋／－ ボタンで数字を調整する部品
 function drawStp(el){
@@ -244,8 +323,9 @@ document.addEventListener('pointerdown',ev=>{
 document.addEventListener('contextmenu',ev=>{if(ev.target.closest&&ev.target.closest('.stp'))ev.preventDefault();});
 $('m1').onclick=()=>{MODE=1;$('m1').className='on';$('m2').className='';$('shopCard').style.display='';calc();};
 $('m2').onclick=()=>{MODE=2;$('m2').className='on';$('m1').className='';$('shopCard').style.display='none';calc();};
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
 document.querySelectorAll('input').forEach(e=>{e.addEventListener('input',calc);e.addEventListener('change',calc)});
-calc();
+applyLang();
 </script>
 </body>
 </html>

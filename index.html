@@ -180,7 +180,7 @@ function show(id,r,vip,S,cost){
     el.innerHTML='<div class="big ok">討伐なしでOK</div><div class="small">持ち越しで足りてる</div>';return;
   }
   head='<div class="big ok">毎日 '+r.k+'回</div>'
-    +'<div class="stm"><div class="t">必要スタミナ</div><div class="l"><span>毎日</span><b>'+stDay.toLocaleString()+'</b></div><div class="l"><span>合計</span><b>'+stAll.toLocaleString()+'</b></div><div class="n">※狩猟集中のスタミナは含みません</div></div>';
+    +'<div class="stm"><div class="t">必要スタミナ</div><div class="l"><span>毎日</span><b>'+stDay.toLocaleString()+'</b></div><div class="l"><span>合計</span><b>'+stAll.toLocaleString()+'</b></div><div class="n">※狩猟集中のスタミナ軽減は計算外</div></div>';
   const todayLeft=r.T-S.done;
   extra='<div class="small">今日はあと <b>'+todayLeft+'</b>回'+(r.D>0?'（以降 毎日'+r.k+'回）':'')+'<br>'
     +'合計 '+r.atk+'回討伐<br>'
